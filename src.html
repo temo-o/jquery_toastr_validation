@@ -1,0 +1,78 @@
+ <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+ <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" rel="stylesheet" type="text/css" />
+ 
+ <!-- Validate form input fields according to their "required" and "pattern" values -->
+ 
+ <form role="form" class="parsley-examples" id="add_account_form" style="marign-bottom: 0px;">
+											
+  <div class="row mb-3">
+
+    <label for="name" class="col-sm-2 col-form-label">Name: <span class="text-danger">*</span></label>
+      <div class="col-sm-4">
+        <input type="text" name="name" required data-fail_text="Only letters, maximum 100 symbols." pattern="^[A-Za-z ]{1,100}$" class="form-control reset to_uppercase" id="name" placeholder="Name" value="" />
+      </div>
+
+    <label for="code" class="col-sm-2 col-form-label">Code: <span class="text-danger">*</span></label>
+    <div class="col-sm-4">
+      <input type="text" name="ucc_code" pattern="^[A-Za-z_-]{1,15}$" required class="form-control to_uppercase" id="code" value="" placeholder="Code" style="" />
+    </div>
+
+  </div>
+</form>
+
+
+<script>
+
+function validate_input(input_id){
+  var pattern_text = $("#" + input_id).prop("pattern");
+  var regex = new RegExp(pattern_text);
+  var input_value = $("#"+input_id).val();
+  var required = $("#"+input_id).prop("required");
+  if(!required && input_value == ""){
+    return true;
+  }
+  if(!required &&  pattern_text == ""){
+    return true;
+  }
+
+  if(required && input_value =="" ){
+    return false;
+  }
+
+  return regex.test(input_value);	
+}
+
+
+$("#add_account_form input").each(function(){
+					
+  if(!validate_input($(this).attr("id"))){
+
+    form_error = true;
+
+    $(this).css("border","1px solid red");
+
+    console.log($(this).text());
+
+    var input_fail_text = $(this).data("fail_text");
+
+    if(input_fail_text == "" || input_fail_text == undefined){
+      var input_fail_text = "Invalid input value";
+    }
+
+    var fail_text = $(this).attr("placeholder") + " - " + input_fail_text;
+
+    toastr.options.timeOut = 5000;
+
+    toastr.error(fail_text);
+    setTimeout(function(){
+      $(".toast.toast-error").css("opacity", "1");
+    },400);
+
+  }
+  else{
+    $(this).css("border","1px solid #ced4da");
+  }
+
+});
+</script>
